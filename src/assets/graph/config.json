@@ -1,0 +1,2495 @@
+[
+    {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": 300,
+      "height": 330,
+      "autosize": "fit",
+  
+  
+      "signals": [
+        {
+          "name": "selected",
+          "value": "",
+          "on": [{
+              "events": "arc:click!",
+              "update": "datum"
+            },
+            {
+              "events": "dblclick!",
+              "update": "''"
+            }
+          ]
+        },
+        {
+          "name": "hovered",
+          "value": "",
+          "on": [{
+              "events": "arc:mouseover!",
+              "update": "datum"
+            },
+            {
+              "events": "arc:mouseout!",
+              "update": "''"
+            }
+          ]
+        }
+      ],
+  
+      "data": [
+        {
+          "name": "table",
+          "values": [{
+              "assigneeId": 1,
+              "assignee": "Samsung",
+              "ipcId": 1,
+              "ipcs": "Biocompatible crosslinked polymer preparation but with some new keywords as this is IPC number 11.",
+              "records": 28,
+              "strength": 87
+            },
+            {
+              "assigneeId": 1,
+              "assignee": "Samsung",
+              "ipcId": 2,
+              "ipcs": "New biocompatible polyhydroxyalkanoate -  having a controlled degradation rate of less  than one year under physiological conditions.",
+              "records": 58,
+              "strength": 77
+            },
+            {
+              "assigneeId": 1,
+              "assignee": "Samsung",
+              "ipcId": 3,
+              "ipcs": "Elastic substantially linear olefin polymers  with processability similar to high branched  LDPE but strength and toughness of LLDPE.",
+              "records": 34,
+              "strength": 24
+            },
+            {
+              "assigneeId": 1,
+              "assignee": "Samsung",
+              "ipcId": 4,
+              "ipcs": "Elastic substantially linear olefin polymers  with processability similar to high branched  LDPE but strength and toughness of LLDPE.",
+              "records": 89,
+              "strength": 111
+            },
+            {
+              "assigneeId": 1,
+              "assignee": "Samsung",
+              "ipcId": 5,
+              "ipcs": "Processability similar to high branched  LDPE but strength.",
+              "records": 55,
+              "strength": 78
+            },
+            {
+              "assigneeId": 2,
+              "assignee": "Sony",
+              "ipcId": 6,
+              "ipcs": "New biocompatible polyhydroxyalkanoate -  having a controlled degradation rate of less  than one year under physiological conditions.",
+              "records": 55,
+              "strength": 55
+            },
+            {
+              "assigneeId": 2,
+              "assignee": "Sony",
+              "ipcId": 7,
+              "ipcs": "Elastic substantially linear olefin polymers  with processability similar to high branched  LDPE but strength and toughness of LLDPE.",
+              "records": 43,
+              "strength": 43
+            },
+            {
+              "assigneeId": 3,
+              "assignee": "Motorola",
+              "ipcId": 8,
+              "ipcs": "Biocompatible crosslinked polymer  preparation by nucleophilic-electrophilic  group reaction between functional polymer  and crosslinking agent, useful e.g. for  preventing surgical adhesions or for drug  delivery.",
+              "records": 91,
+              "strength": 91
+            },
+            {
+              "assigneeId": 4,
+              "assignee": "Apple",
+              "ipcId": 9,
+              "ipcs": "Ethylene polymer, partic. substantially linear  ethylene polymer has melt flow ratio of at least  5.63, mol. wt. distribution of 1.5-2.5, greater  critical shear stress than similar polymers and  had improved processability.",
+              "records": 81,
+              "strength": 81
+            },
+            {
+              "assigneeId": 4,
+              "assignee": "Apple",
+              "ipcId": 10,
+              "ipcs": "Elastic substantially linear olefin polymers  with processability similar to high branched  LDPE but strength and toughness of LLDPE.",
+              "records": 53,
+              "strength": 53
+            },
+            {
+              "assigneeId": 4,
+              "assignee": "Apple",
+              "ipcId": 11,
+              "ipcs": "Processability similar to high branched  LDPE but strength.",
+              "records": 19,
+              "strength": 19
+            },
+            {
+              "assigneeId": 4,
+              "assignee": "Apple",
+              "ipcId": 12,
+              "ipcs": "Biocompatible crosslinked polymer  preparation",
+              "records": 87,
+              "strength": 28
+            },
+            {
+              "assigneeId": 2,
+              "assignee": "Sony",
+              "ipcId": 13,
+              "ipcs": "Biocompatible crosslinked polymer  preparation",
+              "records": 67,
+              "strength": 90
+            }
+          ]
+        },
+        {
+          "name": "data_group_sum",
+          "source": "table",
+          "transform": [{
+            "type": "aggregate",
+            "groupby": ["assigneeId"],
+            "fields": ["records"],
+            "ops": ["sum"],
+            "as": ["records_total"]
+          }]
+        },
+        {
+          "name": "finalData",
+          "source": "table",
+          "transform": [{
+              "type": "lookup",
+              "from": "data_group_sum",
+              "key": "assigneeId",
+              "values": ["records_total"],
+              "fields": ["assigneeId"]
+            },
+            {
+              "type": "pie",
+              "field": "assigneeId",
+              "sort": true
+            }
+          ]
+        }
+      ],
+      "scales": [{
+        "name": "color",
+        "type": "ordinal",
+       
+        "range": {
+          "scheme": "dark2"
+        }
+       
+      }],
+  
+      "marks": [{
+        "name": "mark",
+        "type": "arc",
+        "interactive": true,
+        "from": {
+          "data": "finalData"
+        },
+        "encode": {
+          "enter": {
+            "fill": {
+              "scale": "color",
+              "field": "assignee"
+            },
+            "x": {
+              "signal": "width / 2"
+            },
+            "y": {
+              "signal": "height / 2"
+            }
+          },
+          "update": {
+            "tooltip": [{
+                "test": "(selected.assignee === datum.assignee)",
+                "signal": "datum.ipcs + (datum.records ? ', ' + datum.records + ' records' : '')"
+              },
+              {
+                "signal": "datum.assignee + (datum.records_total ? ', ' + datum.records_total + ' records' : '')"
+              }
+            ],
+            "startAngle": {
+              "field": "startAngle"
+            },
+            "endAngle": {
+              "field": "endAngle"
+            },
+            "stroke": [{
+                "test": "(selected.assignee === datum.assignee)",
+                "value": "white"
+              },
+              {
+                "scale": "color",
+                "field": "assignee"
+              }
+            ],
+            "strokeOpacity": [{
+                "test": "!selected && !hovered || (hovered.assignee===datum.assignee)",
+                "value": 1.0
+              },
+              {
+                "value": 0.0
+              }
+            ],
+            "padAngle": [{
+                "test": "(selected.assignee !== datum.assignee)",
+                "value": 0.0
+              },
+              {
+                "value": 0.01
+              }
+            ],
+            "innerRadius": {
+              "signal": "width/4"
+            },
+            "outerRadius": {
+              "signal": "width / 2"
+            },
+            "cornerRadius": {
+              "value": 0
+            },
+            "fill": [{
+              "scale": "color",
+              "field": "assignee"
+            }],
+            "fillOpacity": [{
+                "test": "(!hovered && !selected) || (hovered.assignee === datum.assignee)",
+                "value": 1.0
+              },
+              {
+                "test": "(selected.assignee === datum.assignee)",
+                "signal": "datum.records",
+                "mult": 0.01
+              },
+              {
+                "value": 0.25
+              }
+            ]
+          },
+          "hover": {}
+        }
+      }]
+    },
+  
+  
+    {
+      "$schema": "https://vega.github.io/schema/vega/v5.json",
+      "description": "A population pyramid showing U.S. demographics from 1850 to 2000.",
+      "height": 300,
+      "width":280,
+      "autosize": {
+        "type": "pad",
+        "resize": true
+      },
+    
+      "signals": [
+         {
+        "name": "tooltip",
+        "value": {},
+        "on": [{
+            "events": "rect:mouseover",
+            "update": "datum"
+          },
+          {
+            "events": "rect:mouseout",
+            "update": "{}"
+          }
+        ]
+      }
+      ],
+    
+      "data": [
+        {
+          "name": "population",
+         "url": "https://vega.github.io/editor/data/population.json"
+        },
+        {
+          "name": "popYear",
+          "source": "population",
+          "transform": [
+            {"type": "filter", "expr": "datum.year == 2000"}
+          ]
+        },
+        {
+          "name": "genderGroups",
+          "source": "popYear",
+          "transform": [
+            {"type": "formula", "expr": "datum.sex == 1?'Male':'Female'","as":"gender"}
+          ]
+        },
+        {
+          "name": "ageGroups",
+          "source": "population",
+          "transform": [
+            {"type": "filter", "expr": "datum.age <= 60 "}
+          ]
+        }
+        
+      ],
+      "scales": [
+        {
+          "name": "x",
+          "type": "band",
+         "range": [
+              {
+                "signal": "width*0"
+              },
+              {
+                "signal": "width*1"
+              }
+            ],
+          "domain": { "data": "ageGroups", "field": "age" }
+        },
+        
+        {
+          "name": "y",
+          "type": "linear",
+          "range": "height",
+          "nice": true,
+          "zero": true,
+          "domain": { "data": "population", "field": "people" }
+        },
+        {
+          "name":"color",
+          "type":"ordinal",
+          "range":"category",
+          "domain":{"data":"genderGroups","field":"gender"}
+        }
+    
+      ],
+    
+      "axes": [{ "orient": "bottom", "scale": "x", "zindex": 1}, 
+        { "orient": "left", "scale": "y", "zindex": 1,"format": "s"}],
+        "marks": [
+          {
+            "type": "rect",
+            "from": { "data": "popYear" },
+            "encode": {
+              "enter": {
+                "x": { "scale": "x", "field": "age","bin":true },
+                "width": { "scale": "x", "band": 1, "offset": 10 },
+                "y": { "scale": "y", "field": "population"},
+                "fill": { "scale":"color","field":"gender"}
+              },
+              "update": {
+                "y": { "scale": "y", "field": "population" },
+                 "y2": { "scale": "y", "value": 0 }
+                        
+                
+              },
+              "hover": {
+               
+              }
+            }
+          }
+        ]
+    },
+  
+    {
+      "$schema": "https://vega.github.io/schema/vega/v5.json",
+      "height":300,
+      "width":400,
+     
+      
+      "data": [{
+        "name": "table",
+        "values": [{
+            "category": "A",
+            "amount": 28
+          },
+          {
+            "category": "B",
+            "amount": 55
+          },
+          {
+            "category": "C",
+            "amount": 43
+          },
+          {
+            "category": "D",
+            "amount": 91
+          },
+          {
+            "category": "E",
+            "amount": 81
+          },
+          {
+            "category": "F",
+            "amount": 53
+          },
+          {
+            "category": "G",
+            "amount": 19
+          },
+          {
+            "category": "H",
+            "amount": 87
+          }
+        ]
+      }],
+  
+      "signals": [
+        
+        {
+        "name": "tooltip",
+        "value": {},
+        "on": [{
+            "events": "rect:mouseover",
+            "update": "datum"
+          },
+          {
+            "events": "rect:mouseout",
+            "update": "{}"
+          }
+        ]
+      }],
+  
+      "scales": [{
+          "name": "xscale",
+          "type": "band",
+          "range": [
+            {
+              "signal": "width*0"
+            },
+            {
+              "signal": "width*0.50"
+            }
+          ],
+          "domain": {
+            "data": "table",
+            "field": "category"
+          },
+         
+          "padding": 0.1,
+          "round": true
+        },
+        {
+          "name": "yscale",
+          "domain": {
+            "data": "table",
+            "field": "amount"
+          },
+          "nice": true,
+          "range": "height"
+        }
+      ],
+  
+      "axes": [{
+          "orient": "bottom",
+          "scale": "xscale"
+        },
+        {
+          "orient": "left",
+          "scale": "yscale",
+          "tickCount": 5,
+          "offset": 6
+        }
+      ],
+  
+      "marks": [{
+          "type": "rect",
+          "from": {
+            "data": "table"
+          },
+          "encode": {
+            "enter": {
+              "x": {
+                "scale": "xscale",
+                "field": "category"
+              },
+              "width": {
+                "scale": "xscale",
+                "band": 1
+              },
+              "y": {
+                "scale": "yscale",
+                "field": "amount"
+              },
+              "y2": {
+                "scale": "yscale",
+                "value": 0
+              }
+            },
+            "update": {
+              "fill": {
+                "value": "steelblue"
+              }
+            },
+            "hover": {
+              "fill": {
+                "value": "red"
+              }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "encode": {
+            "enter": {
+              "align": {
+                "value": "center"
+              },
+              "baseline": {
+                "value": "bottom"
+              },
+              "fill": {
+                "value": "#333"
+              }
+            },
+            "update": {
+              "x": {
+                "scale": "xscale",
+                "signal": "tooltip.category",
+                "band": 0.5
+              },
+              "y": {
+                "scale": "yscale",
+                "signal": "tooltip.amount",
+                "offset": -2
+              },
+              "text": {
+                "signal": "tooltip.amount"
+              },
+              "fillOpacity": [{
+                  "test": "isNaN(tooltip.amount)",
+                  "value": 0
+                },
+                {
+                  "value": 1
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+  
+  
+  
+    {
+      "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+      "data": {"url": "https://vega.github.io/editor/data/stocks.csv"},
+      "width": 400,
+      "height": 300,
+      "encoding": {"x": {"field": "date", "type": "temporal"}},
+      "layer": [
+        {
+          "encoding": {
+            "color": {"field": "symbol", "type": "nominal"},
+            "y": {"field": "price", "type": "quantitative"}
+          },
+          "layer": [
+            {"mark": "line"},
+            {"transform": [{"filter": {"selection": "hover"}}], "mark": "point"}
+          ]
+        },
+        {
+          "transform": [{"pivot": "symbol", "value": "price", "groupby": ["date"]}],
+          "mark": "rule",
+          "encoding": {
+            "opacity": {
+              "condition": {"value": 0.3, "selection": "hover"},
+              "value": 0
+            },
+            "tooltip": [
+              {"field": "AAPL", "type": "quantitative"},
+              {"field": "AMZN", "type": "quantitative"},
+              {"field": "GOOG", "type": "quantitative"},
+              {"field": "IBM", "type": "quantitative"},
+              {"field": "MSFT", "type": "quantitative"}
+            ]
+          },
+          "selection": {
+            "hover": {
+              "type": "single",
+              "fields": ["date"],
+              "nearest": true,
+              "on": "mouseover",
+              "empty": "none",
+              "clear": "mouseout"
+            }
+          }
+        }
+      ]
+    },
+  
+  
+    {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "data": { "url": "https://vega.github.io/editor/data/cars.json"},
+      "mark": {
+        "type": "line",
+        "tooltip": true,
+        "point":true
+      },
+      "width": 400,
+      "encoding": {
+        "x": {
+          "field": "Year", "type": "nominal"
+        },
+        "y": {
+          "aggregate": "count", "type": "quantitative"
+        },
+        "color": {
+          "field": "Origin",
+          "type": "nominal",
+          "legend": {
+            "orient": "left",
+            "strokeColor": "#d4d4d4",
+            "padding": 6,
+            "title": "Cars from"
+          }
+        },
+        "opacity": {
+          "value": 0.3,
+          "condition": [
+            {
+              "selection": "selected",
+              "value": 1
+            }
+          ]
+        }
+      },
+      "selection": {
+        "selected": {
+          "type": "multi",
+          "toggle": "true"
+        },
+        "hover": {
+          "type": "single",
+          "empty": "none",
+          "on": "mouseover",
+          "clear": "mouseout"
+        }
+      }
+    },
+    {
+        "$schema": "https://vega.github.io/schema/vega/v5.json",
+        "description": "A basic line chart example.",
+        "width": 500,
+        "height": 200,
+        "padding": 5,
+        "data": [
+          {
+            "name": "table",
+            "url":"https://vega.github.io/editor/data/stocks.csv"
+          }
+        ],
+      
+        "scales": [
+          {
+            "name": "x",
+            "type": "point",
+            "range": "width",
+            "domain": {"data": "table", "field": "x"}
+          },
+          {
+            "name": "y",
+            "type": "linear",
+            "range": "height",
+            "nice": true,
+            "zero": true,
+            "domain": {"data": "table", "field": "y"}
+          },
+          {
+            "name": "color",
+            "type": "ordinal",
+            "range": "category",
+            "domain": {"data": "table", "field": "c"}
+          }
+        ],
+      
+        "axes": [
+          {"orient": "bottom", "scale": "x"},
+          {"orient": "left", "scale": "y"}
+        ],
+       "layer": [
+          {
+            "encoding": {
+              "color": {"field": "symbol", "type": "nominal"},
+              "y": {"field": "price", "type": "quantitative"}
+            },
+            "layer": [
+              {"mark": "line"},
+              {"transform": [{"filter": {"selection": "hover"}}], "mark": "point"}
+            ]
+          },
+          {
+            "transform": [{"pivot": "symbol", "value": "price", "groupby": ["date"]}],
+            "mark": "rule",
+            "encoding": {
+              "opacity": {
+                "condition": {"value": 0.3, "selection": "hover"},
+                "value": 0
+              },
+              "tooltip": [
+                {"field": "AAPL", "type": "quantitative"},
+                {"field": "AMZN", "type": "quantitative"},
+                {"field": "GOOG", "type": "quantitative"},
+                {"field": "IBM", "type": "quantitative"},
+                {"field": "MSFT", "type": "quantitative"}
+              ]
+            },
+            "selection": {
+              "hover": {
+                "type": "single",
+                "fields": ["date"],
+                "nearest": true,
+                "on": "mouseover",
+                "empty": "none",
+                "clear": "mouseout"
+              }
+            }
+          }
+        ]
+       
+      },
+    
+      {
+        "$schema": "https://vega.github.io/schema/vega/v5.json",
+        "description": "A population pyramid showing U.S. demographics from 1850 to 2000.",
+        "height": 300,
+        "width":100,
+        "autosize": {
+          "type": "pad",
+          "resize": true
+        },
+      
+        "signals": [
+           {
+          "name": "tooltip",
+          "value": {},
+          "on": [{
+              "events": "rect:mouseover",
+              "update": "datum"
+            },
+            {
+              "events": "rect:mouseout",
+              "update": "{}"
+            }
+          ]
+        }
+        ],
+      
+        "data": [
+          {
+            "name": "population"  
+           
+          
+          },
+          {
+            "name": "popYear",
+            "source": "population",
+            "transform": [
+              {"type": "filter", "expr": "datum.year == 2000"}
+            ]
+          },
+          {
+            "name": "genderGroups",
+            "source": "population",
+            "transform": [
+              {"type": "formula", "expr": "datum.sex == 2?'FeMale':'Male'","as":"gender"}
+            ]
+          },
+          {
+            "name": "ageGroups",
+            "source": "population",
+            "transform": [
+              {"type": "filter", "expr": "datum.age <= 25 "}
+            ]
+          }
+          
+        ],
+        "scales": [
+          {
+            "name": "x",
+            "type": "band",
+           "range": [
+                {
+                  "signal": "width*0"
+                },
+                {
+                  "signal": "width*1"
+                }
+              ],
+            "domain": { "data": "ageGroups", "field": "age" }
+          },
+          
+          {
+            "name": "y",
+            "type": "linear",
+            "range": "height",
+            "nice": true,
+            "zero": true,
+            "domain": { "data": "population", "field": "population" }
+          },
+          {
+            "name":"color",
+            "type":"ordinal",
+            "range":"category",
+            "domain":{"data":"genderGroups","field":"gender"}
+          }
+      
+        ],
+      
+        "axes": [{ "orient": "bottom", "scale": "x", "zindex": 1,"grid": true}, 
+          { "orient": "left", "scale": "y", "zindex": 1,"format": "s","grid": true}],
+          "marks": [
+            {
+              "type": "group",
+              "from": {
+                "facet": {
+                  "name": "series",
+                  "data": "genderGroups",
+                  "groupby": "gender"
+                }
+              },
+              "marks": [
+                {
+                  "type": "rect",
+                  "from": {"data": "series"},
+                  "encode": {
+                    "enter": {
+                      "x": {"scale": "x", "field": "age"},
+                      "y": {"scale": "y", "field": "population"},
+                      "stroke": {
+                        "scale":"color",
+                        "field": "gender",
+                        "sort": false,
+                        "type": "nominal",
+                        "legend": { "title": "population" }
+                      } ,
+                     
+                      "strokeWidth": {"value": 2}
+                    },
+                    "update": {
+                      "strokeOpacity": {"value": 2}
+                    },
+                    "hover": {
+                      "strokeOpacity": {"value": 0.5}
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+      },
+    
+    
+      {
+        "$schema": "https://vega.github.io/schema/vega/v5.json",
+        "description": "A basic line chart example.",
+        "width": 310,
+        "height": 200,
+        "autoSize":"pad",
+      
+        "data": 
+          {
+            "values":[],
+            "name": "table"
+          }
+        ,
+      
+        "scales": [
+          {
+            "name": "x",
+            "type": "point",
+            "range": "width",
+            "domain": {"data": "table", "field": "x"}
+          },
+          {
+            "name": "y",
+            "type": "linear",
+            "range": "height",
+            "nice": true,
+            "zero": true,
+            "domain": {"data": "table", "field": "y"}
+          },
+          {
+            "name": "color",
+            "type": "ordinal",
+            "range": "category",
+            "domain": {"data": "table", "field": "c"}
+          }
+        ],
+      
+        "axes": [
+          {"orient": "bottom", "scale": "x"},
+          {"orient": "left", "scale": "y"}
+        ],
+      
+        "marks": [
+          {
+            "type": "group",
+            "from": {
+              "facet": {
+                "name": "series",
+                "data": "table",
+                "groupby": "c"
+              }
+            },
+            "marks": [
+              {
+                "type": "line",
+                "from": {"data": "series"},
+                "encode": {
+                  "enter": {
+                    "x": {"scale": "x", "field": "x"},
+                    "y": {"scale": "y", "field": "y"},
+                    "stroke": {"scale": "color", "field": "c"},
+                    "strokeWidth": {"value": 2}
+                  },
+                  "update": {
+                    "strokeOpacity": {"value": 1}
+                  },
+                  "hover": {
+                    "strokeOpacity": {"value": 0.5}
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+        "description": "A line chart with a single value.",
+        "autosize": "pad",
+        "padding": 5,
+        "style": "cell",
+        "data": [
+          {
+            "name": "source_0",
+            "url":"https://vega.github.io/editor/data/population.json"
+          
+          },
+          {
+            "name": "popYear",
+            "source": "source_0",
+            "transform": [
+              {"type": "filter", "expr": "datum.sex == 2000"}
+            ]
+          },
+          {
+            "name": "data_0",
+            "source": "source_0",
+            "transform": [
+              {
+                "type": "formula",
+                "expr": "datum.sex == 2?'FeMale':'Male'",
+                "as": "gender"
+              }
+            ]
+          }
+        ],
+        "signals": [
+          {"name": "x_step","value": 21},
+          {
+            "name": "width",
+            "update": "bandspace(domain('x').length, 1, 0.5) * x_step"
+          },
+          {"name": "height","update": "200"}
+        ],
+        "marks": [
+          {
+            "name": "marks",
+            "type": "line",
+            "style": ["line"],
+            "from": {"data": "popYear"},
+            "encode": {
+              "update": {
+                "x": {"scale": "x","field": "age"},
+                "y": {"scale": "y","field": "people"},
+                "color":{"field":"gender","type":"ordinal"}
+               
+              }
+            }
+          }
+        ],
+        "scales": [
+          {
+            "name": "x",
+            "type": "point",
+            "domain": {"data": "data_0","field": "age","sort": true},
+            "range": {"step": {"signal": "x_step"}},
+            "padding": 0.5
+          },
+          {
+            "name": "y",
+            "type": "linear",
+            "domain": {"data": "data_0","field": "people"},
+            "range": [{"signal": "height"},0],
+            "nice": true,
+            "zero": true
+          },
+          {
+            "name":"color",
+            "type": "linear",
+            "domain":{"data": "data_0","field":"gender"}
+          }
+        ],
+        "axes": [
+          {
+            "scale": "x",
+            "labelOverlap": true,
+            "orient": "bottom",
+            "title": "a",
+            "zindex": 1,
+            "encode": {
+              "labels": {
+                "update": {
+                  "angle": {"value": 270},
+                  "align": {"value": "right"},
+                  "baseline": {"value": "middle"}
+                }
+              }
+            }
+          },
+          {
+            "scale": "y",
+            "labelOverlap": true,
+            "orient": "left",
+            "tickCount": {"signal": "ceil(height/40)"},
+            "title": "b",
+            "zindex": 1
+          },
+          {
+            "scale": "y",
+            "domain": false,
+            "grid": true,
+            "labels": false,
+            "maxExtent": 0,
+            "minExtent": 0,
+            "orient": "left",
+            "tickCount": {"signal": "ceil(height/40)"},
+            "ticks": false,
+            "zindex": 0,
+            "gridScale": "x"
+          }
+        ],
+        "config": {
+          "axis": {"domainColor": "#888","tickColor": "#888"},
+          "axisY": {"minExtent": 30}
+        }
+      }
+  
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+  {
+    "$schema": "https://vega.github.io/schema/vega/v5.json",
+    "description": "A population pyramid showing U.S. demographics from 1850 to 2000.",
+    "height": 280,
+    "width":280,
+    "autosize": {
+      "type": "pad",
+      "resize": true
+    },
+  
+   
+    "data": [
+      {
+        "name": "population"  
+       
+      
+      },
+      {
+        "name": "genderGroups",
+        "source": "population",
+        "transform": [
+          {
+            "type": "formula",
+             "expr": "datum.sex == 2?'FeMale':'Male'",
+             "as":"gender"
+            }
+        ]
+      }
+      
+    ],
+    "scales": [
+      {
+        "name": "x",
+        "type": "band",
+        "padding":0.5,
+       "range": [
+            {
+              "signal": "width*0"
+            },
+            {
+              "signal": "width*1"
+            }
+          ],
+        "domain": { "data": "population", "field": "age" }
+      },
+      
+      {
+        "name": "y",
+        "type": "linear",
+        "range": "height",
+        "nice": true,
+        "zero": true,
+        "domain": { "data": "population", "field": "population" }
+      }
+  
+    ],
+  
+    "axes": [{ "orient": "bottom", "scale": "x", "zindex": 1,"grid":true,"title":"Different age group"}, 
+      { "orient": "left", "scale": "y", "zindex": 1,"grid":true,"format": "s","title":"Total Population"}],
+
+      "marks": [
+        {
+          "type": "line",
+          "from": {"data": "population"},
+          "encode": {
+            "enter": {
+              "x": {"scale": "x", "field": "age"},
+              "y": {"scale": "y", "field": "population"},
+              "color":{"data":"population","field":"year","legend":{"title":"Total Population"}},     
+              "strokeWidth": {"value": 2}
+            },
+            "update": {
+             
+              "strokeOpacity": {"value": 2}
+            },
+            "hover": {
+              "strokeOpacity": {"value": 0.5},
+              "stroke": {"value": "red"}
+            }
+          }
+        }
+      ]
+
+     
+      
+     
+      
+         
+        
+  },
+  {
+    "$schema": "https://vega.github.io/schema/vega/v5.json",
+    "description": "A population pyramid showing U.S. demographics from 1850 to 2000.",
+    "height": 300,
+    "width":280,
+    "autosize": {
+      "type": "pad",
+      "resize": true
+    },
+  
+   
+    "data": [
+      {
+        "name": "population"  
+       
+      
+      },
+      {
+        "name": "genderGroups",
+        "source": "population",
+        "transform": [
+          {
+            "type": "formula",
+             "expr": "datum.sex == 2?'FeMale':'Male'",
+             "as":"gender"
+            }
+        ]
+      }
+      
+    ],
+    "scales": [
+      {
+        "name": "x",
+        "type": "band",
+        "padding":0.5,
+       "range": [
+            {
+              "signal": "width*0"
+            },
+            {
+              "signal": "width*1"
+            }
+          ],
+        "domain": { "data": "population", "field": "year" }
+      },
+      
+      {
+        "name": "y",
+        "type": "linear",
+        "range": "height",
+        "nice": true,
+        "zero": true,
+        "domain": { "data": "population", "field": "population" }
+      },
+      {
+        "name": "color",
+        "type": "ordinal",
+        "domain": {"data": "population", "field": "age"},
+        "range": {"scheme": "category20"}
+      }
+  
+    ],
+  
+    "axes": [{ "orient": "bottom", "scale": "x", "zindex": 1,"grid":true,"title":"years"}, 
+      { "orient": "left", "scale": "y", "zindex": 1,"grid":true,"format": "s","title":"Total Population"}],
+    
+    
+         
+      "marks": [
+        {
+          "type": "line",
+          "color": "#d32f2f",
+          "from": {"data": "population"},
+          "encode": {
+            "enter": {
+              "x": {"scale": "x", "field": "year"},
+              "y": {"scale": "y", "field": "population"},
+              "color":{"field":"age","data":"population"}
+            
+            },
+            "update": {
+              "strokeOpacity": {"value": 2}
+            },
+            "hover": {
+              "strokeOpacity": {"value": 0.5}
+            }
+          }
+        }
+      ]
+    
+          
+        
+      
+      
+
+     
+      
+     
+      
+         
+        
+  },
+  {
+    "$schema": "https://vega.github.io/schema/vega/v5.json",
+    "width": 280,
+    "height": 300,
+    "padding": 5,
+  
+    "data": [
+      {
+        "name": "population"
+      },
+      {
+        "name": "aggregated",
+        "source": "population",
+        "transform": [
+          {
+            "type": "aggregate",
+            "fields": ["population"],
+            "groupby": ["age", "year"],
+            "ops": ["sum"],
+            "as": ["aggregatedPeople"]
+          }
+        ]
+      },
+
+      {
+        "name": "maxPeople",
+        "source": "aggregated",
+        "transform": [
+          {
+            "type": "aggregate",
+            "fields": ["aggregatedPeople"],
+            "groupby": ["year"],
+            "ops": ["max"],
+            "as": ["max_aggregatedPeople"]
+          }
+        ]
+      },
+      {
+        "name": "genderfilter",
+        "source":"population",
+        "transform": [
+          {
+            "type":"formula",
+              "expr": "datum.sex == 2?'Female':'Male' ",
+              "as":"gender"
+           
+          }
+        ]
+      }
+    ],
+    
+   
+
+    "scales": [
+      {
+        "name": "xscale",
+        "type": "band",
+        "zero":false,
+        "padding":0.5,
+       "range": [
+            {
+              "signal": "width*0"
+            },
+            {
+              "signal": "width*1"
+            }
+          ],
+        "domain": {"field":"age","data":"population"}
+       
+      },
+      {
+        "name": "yscale",
+        "type": "linear",
+        "domain": {"data": "aggregated", "field": "aggregatedPeople"},
+        "range": "height", "round": true
+      },
+      {
+        "name": "c",
+          "type": "ordinal",
+          "domain": [1, 2],
+          "range": ["#d5855a", "#6c4e97"]
+      }
+    ],
+  
+    "axes": [
+      {"orient": "bottom", "scale": "xscale", "zindex": 1,"grid":false,"title":"Different age group"
+      
+      },
+      {"orient": "left", "scale": "yscale","format":"s","grid":true,"title":"Total Population"}
+    ],
+
+  
+    "marks": [
+      {
+        "type": "rect",
+        "name": "peopleBars",
+        "from": {"data": "aggregated"},
+        "encode": {
+          "update": {
+            "x": {"scale": "xscale", "field": "age","padding":0},
+            "width": {"value": 20,"band":1},
+            "y": {"scale": "yscale", "field": "aggregatedPeople"},
+            "y2": {"scale": "yscale", "value": 0},
+            "fill":{"value":"red"}
+
+          },
+          "hover": {
+               "fill":{"value":"red"}
+          }
+        }
+      }
+    ]
+    },
+
+    {
+      "$schema": "https://vega.github.io/schema/vega/v5.json",
+      "description": "A population pyramid showing U.S. demographics from 1850 to 2000.",
+      "height": 250,
+      "padding": 5,
+    
+      "signals": [
+        { "name": "chartWidth", "value": 200 },
+        { "name": "chartPad", "value": 20 },
+        { "name": "width", "update": "0 * chartWidth + chartPad" }
+      ],
+    
+      "data": [
+        {
+          "name": "population"
+        },
+        {
+          "name": "popYear",
+          "source": "population"
+        },
+        {
+          "name": "males",
+          "source": "popYear",
+          "transform": [
+            {"type": "filter", "expr": "datum.sex == 1"}
+          ]
+        },
+        {
+          "name": "females",
+          "source": "popYear",
+          "transform": [
+            {"type": "filter", "expr": "datum.sex == 2"}
+          ]
+        },
+        {
+          "name": "ageGroups",
+          "source": "population",
+          "transform": [
+            { "type": "aggregate", "groupby": ["age"] }
+          ]
+        }
+      ],
+    
+      "scales": [
+        {
+          "name": "y",
+          "type": "band",
+          "range": [{"signal": "height"}, 0],
+          "round": true,
+          "domain": {"data": "ageGroups", "field": "age"}
+        },
+        {
+          "name": "c",
+          "type": "ordinal",
+          "domain": [1, 2],
+          "range": ["orangered", "green"]
+        }
+      ],
+    
+      "marks": [
+        {
+          "type": "text",
+          "interactive": false,
+          "from": {"data": "ageGroups"},
+          "encode": {
+            "enter": {
+              "x": {"signal": "chartWidth + chartPad / 2"},
+              "y": {"scale": "y", "field": "age", "band": 0.5},
+              "text": {"field": "age"},
+              "baseline": {"value": "middle"},
+              "align": {"value": "center"},
+              "fill": {"value": "#000"}
+            }
+          }
+        },
+        {
+          "type": "group",
+    
+          "encode": {
+            "update": {
+              "x": {"value": 0},
+              "height": {"signal": "height"}
+            }
+          },
+    
+          "scales": [
+            {
+              "name": "x",
+              "type": "linear",
+              "range": [{"signal": "chartWidth"}, 0],
+              "nice": true, "zero": true,
+              "domain": {"data": "population", "field": "population"}
+            }
+          ],
+    
+          "axes": [
+            {"orient": "bottom", "scale": "x", "format": "s", "tickCount": 4,"title": "Females","grid":true}
+          ],
+    
+          "marks": [
+            {
+              "type": "rect",
+              "from": {"data": "females"},
+              "encode": {
+                "enter": {
+                  "x": {"scale": "x", "field": "population"},
+                  "x2": {"scale": "x", "value": 0},
+                  "y": {"scale": "y", "field": "age"},
+                  "height": {"scale": "y", "band": true, "offset": -1},
+                  "fillOpacity": {"value": 0.7},
+                  "fill": {"scale": "c", "field": "sex"}
+                }
+              },
+              "tooltip": [
+                {
+                "field": "population",
+                "type": "quantitative",
+                "title":"value"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "group",
+    
+          "encode": {
+            "update": {
+              "x": {"signal": "chartWidth + chartPad"},
+              "height": {"signal": "height"}
+            }
+          },
+    
+          "scales": [
+            {
+              "name": "x",
+              "type": "linear",
+              "range": [0, {"signal": "chartWidth"}],
+              "nice": true, "zero": true,
+              "domain": {"data": "population", "field": "population"}
+            }
+          ],
+    
+          "axes": [
+            {"orient": "bottom", "scale": "x", "format": "s","grid":true,  "tickCount": 4, "title": "Males"}
+          ],
+    
+          "marks": [
+            {
+              "type": "rect",
+              "from": {"data": "males"},
+              "encode": {
+                "enter": {
+                  "x": {"scale": "x", "field": "population"},
+                  "x2": {"scale": "x", "value": 0},
+                  "y": {"scale": "y", "field": "age"},
+                  "height": {"scale": "y", "band": true, "offset": -1},
+                  "fillOpacity": {"value": 0.7},
+                  "fill": {"scale": "c", "field": "sex"}
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+,
+{
+"$schema": "https://vega.github.io/schema/vega/v5.json",
+"width": 400,
+"height": 300,
+"padding": 5,
+
+"data": [
+  {
+    "name": "population",
+    "url":"data/population.json",
+     "transform": [
+         {
+          "type":"filter",
+          "expr": "datum.year == 1850"
+        
+         }
+    ]
+  },
+  {
+    "name":"GenderGropps",
+    "source":"population",
+    "transform": [
+         {
+          "type":"formula",
+          "expr": "datum.sex ==2?'Female':'Male'",
+          "as":"gender"
+         }
+    ]
+
+
+
+
+  },
+  {
+    "name": "aggregated",
+    "source": "GenderGropps",
+    "transform": [
+      {
+        "type": "aggregate",
+        "fields": ["people"],
+        "groupby": ["age", "year","gender"],
+        "ops": ["sum"],
+        "as": ["aggregatedPeople"]
+      }
+    ]
+  },
+  {
+    "name": "MaxPeople",
+    "source":"GenderGropps",
+    "transform": [
+      {
+        "type": "aggregate",
+        "fields": ["people"],
+        "groupby":["gender","year","age"],
+        "ops": ["max"],
+        "as": ["max_people"]
+      }
+    ]
+   
+
+
+
+  }
+],
+"scales": [
+  {
+    "name": "xscale",
+    "type": "band",
+      "round": true,
+    "range": [
+        {
+          "signal": "width*0"
+        },
+        {
+          "signal": "width*1"
+        }
+      ],
+    "domain":{"data":"aggregated","field":"age"}
+  },
+  {
+  "name": "yscale",
+  "type": "linear",
+   "range":"height",
+   "zero":true,
+   "nice":true,
+   "domain":{"data":"aggregated","field":"aggregatedPeople"}
+
+  },
+  {
+    "name": "color",
+      "type": "ordinal",
+      "domain":[2,1],
+      "range": ["#d5855a", "#6c4e97"]
+  }
+],
+"axes": [
+   {"orient": "bottom", "scale": "xscale","zindex": 1,"grid":false,"title":"Years"
+  
+  },
+   {"orient": "left", "scale": "yscale", "grid":true,"title":"Total Population","format":"s"
+  
+  }
+],
+"marks": [
+  {
+    "name":"people",
+  "type": "rect",
+  "from": {"data":"aggregated"},
+  "encode": { 
+   
+    "update":{
+      "x":{"scale":"xscale","field":"age"},
+      "width":{"scale":"xscale","band":0.8,"paddingInner":0.5},
+      "y": {"scale": "yscale", "field": "aggregatedPeople", "stack": "zero"},
+      "y2":{"scale":"yscale","value":0},
+     "color": {
+       "field": "gender",
+         "type": "nominal",
+       "range": ["#e377c2", "#1f77b4"]
+},
+      "fillOpacity":{"value":1}
+    },
+    "hover":{
+      "fill":{"value":"green"},
+       "tooltip": {"signal": "{'TotalPopulation': datum.aggregatedPeople,'Age': datum.age, 'Gender': datum.gender,'Year':datum.year}"}
+    }
+   
+   
+
+
+
+  }
+
+
+  }
+
+
+
+
+]
+},
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 500,
+  "height": 500,
+  "autosize": "pad",
+
+  "signals": [
+    {
+      "name": "selected",
+      "value": "",
+      "on": [
+        { "events": "arc:click!", "update": "datum" },
+        { "events": "dblclick!", "update": "''" }
+      ]
+    }
+  ],
+ "data": [
+        {
+          "name": "population",
+         "url":"data/population.json",
+       "transform": [
+          {
+             "type":"filter",
+             "expr": "datum.year == 2000"
+           },
+           {
+             "type":"filter",
+             "expr": "datum.age <=50"
+           },
+
+        {
+          "type": "pie",
+          "field": "people"
+        }
+      ]
+        },
+        {
+          "name":"GenderGropps",
+          "source":"population",
+          "transform": [
+               {
+                "type":"formula",
+                "expr": "datum.sex ==2?'Female':'Male'",
+                "as":"gender"
+               }
+          ]
+        },
+        {
+          "name": "aggregated",
+          "source": "GenderGropps",
+          "transform": [
+            {
+              "type": "filter",
+              "expr": "datum.year == 2000"
+            },
+            {
+              "type": "aggregate",
+              "fields": ["people"],
+              "groupby": ["age", "year","gender"],
+              "ops": ["sum"],
+              "as": ["aggregatedPeople"]
+            }
+            
+          ]
+        },
+        {
+          "name":"yearFilter",
+          "source":"aggregated",
+         "transform": [
+           {
+             "type":"filter",
+             "expr": "datum.year == 2000"
+           }
+         ]
+        }
+  
+       
+      ],
+ 
+
+  "scales": [
+    {
+      "name": "color",
+      "type": "ordinal",
+      "range": { "scheme": "category20" }
+    }
+  ],
+
+  "marks": [
+    {
+      "name": "group",
+      "type": "arc",
+      "interactive": true,
+      "from": { "data": "GenderGropps" },
+      "encode": {
+        "enter": {
+          
+          "tooltip": {"signal": "{'title': 'Population in 2000','TotalPeople': datum.people, 'Age': datum.age,'Gender':datum.gender,'Year':datum.year}"}
+        },
+        "update": {
+          "startAngle": { "field": "startAngle" },
+          "endAngle": { "field": "endAngle" },
+          "padAngle": [{ "value": 0.01 }],
+          "outerRadius": { "signal": "width / 2.5" },
+          "cornerRadius": { "value": 0 },
+          "innerRadius": { "signal": 70 },
+          "opacity": [{ "value": 1.0 }],
+          "color":[{ "scale": "color", "field": "age" ,"legend":"true"}],
+           "fill": [{ "scale": "color", "field": "age" ,"legend":"true"}]
+         
+         
+        },
+        "hover": {}
+      }
+    }
+  ]
+},
+{
+
+  "$schema":"https://vega.github.io/schema/vega/v5.json",
+  "autosize":{
+    "type":"pad",
+    "resize":true},
+    "height":300,
+    "padding":0.5,
+
+    "signals":[
+      {
+        "name":"chartWidth",
+        "value":200
+      },
+      {"name":"chartPad","value":20}
+
+    ],
+    "data":[
+      {
+        "name":"population",
+        "url":"data/population.json"
+      },
+      {
+        "name": "popYear",
+         "source": "population",
+         "transform": [{
+          "type": "filter",
+          "expr": "datum.year == 1950"
+               }]
+     },
+      {
+        "name":"GenderGroups",
+        "source":"popYear",
+        "transform":[
+          {
+            "type":"formula",              
+            "expr":"datum.sex == 2?'Female':'Male' ",
+            "as":"gender"
+          }
+        ]
+      },
+      {
+        "name":"aggregated",
+        "source":"GenderGroups",
+        "transform":[
+              {
+                "type":"aggregate",
+                "fields":["people"],
+                "groupby":["year","age"],
+                "ops":["sum"],
+                "as":["TotalPeople"]
+
+               
+              }
+
+
+        ]
+      },
+      {
+        "name":"ByGenders",
+        "source":"GenderGroups",
+        "transform": [ 
+          {
+            "type": "aggregate",
+            "fields":["people"],
+            "groupby":["year","age","gender"],
+            "ops":["sum"],
+            "as":["genderpopulation"]
+          }
+
+
+        ]
+      },
+      {
+        "name": "Females",
+        "source":"GenderGroups",
+        "transform": [
+          {
+           "type": "filter",
+           "expr": "datum.sex==2"
+
+          }
+        ]
+      },
+       {
+        "name": "Males",
+        "source":"GenderGroups",
+        "transform": [
+          {
+           "type": "filter",
+           "expr": "datum.sex==1"
+
+          }
+        ]
+      }
+
+
+
+
+    ],
+    "scales": [
+      {
+   "name": "y",
+   "type": "band",
+   "range": [{"signal": "height"}, 0],
+   "round": true,
+   "domain": {"data": "GenderGroups", "field": "age"}
+ },
+ {
+   "name": "c",
+   "type": "ordinal",
+   "domain": [1, 2],
+   "range": {"scheme":"category20"}
+ }
+    ],
+
+    "marks": [
+      {
+        "type": "text",
+        "from": {"data":"GenderGroups"},
+        "encode": {
+          "enter":{
+            "x":{"signal":"chartWidth + chartPad / 2 "},
+            "y": {"scale": "y", "field": "age", "band": 0.5},
+              "text": {"field": "age"},
+               "baseline": {"value": "middle"},
+             "align": {"value": "center"},
+              "fill": {"value": "#000"}
+          }
+
+
+        }
+      },
+
+      {
+        "type": "group",
+        "encode": {
+          "update":{
+            "x":{"value":0},
+            "height":{"signal":"height"}
+          }
+        },
+        "scales": [
+          {
+            "name":"x",
+            "type":"linear",
+            "range":[{"signal":"chartWidth"},0],
+            "zero":true,
+            "domain":{"data":"GenderGroups","field":"people"}
+
+          }
+        ],
+         "axes": [
+         {"orient": "bottom", "scale": "x", "format": "s","title":  
+            "Females","grid":true}
+   ],
+   "marks": [
+     {
+       "type": "rect",
+       "from": {"data":"Females"},
+       "encode": {
+         "enter":{
+           "x": {"scale": "x", "field": "people"},
+           "x2": {"scale": "x", "value": 0},
+           "y": {"scale": "y", "field": "age"},
+           "height": {"scale": "y", "band":true, "offset": -2},
+           "fillOpacity": {"value": 1},
+           "fill": {"scale": "c", "field": "sex"}
+
+
+         }
+       }
+
+   }
+   ]
+
+
+
+
+
+      },
+      {
+      "type": "group",
+      "encode": {
+       "update": {
+       "x": {"signal": "chartWidth + chartPad"},
+       "height": {"signal": "height"}
+     }
+      },
+      "scales": [
+        {
+          "name":"x",
+          "type": "linear",
+          "range":[0,{"signal":"chartWidth"}],
+          "domain":{"data":"GenderGroups","field":"people"}
+        }
+
+      ],
+      "axes": [{"orient":"bottom","scale":"x","format":"s","grid":true,"title":"Males"}],
+      "marks": [
+        {
+          "type":"rect",
+          "from":{"data":"Males"},
+          "encode": {
+            "enter":{
+              "x":{"scale":"x","field":"people"},
+              "x2":{"scale":"x","value":0},
+              "y":{"scale":"y","field":"age"},
+              "height": {"scale": "y", "band":0.5, "offset": 2},
+               "fillOpacity": {"value": 1},
+              "fill":{"scale":"c","field":"sex"}
+            },
+            "legend":{
+              "title":"gender"
+            }
+
+
+          }
+        }
+
+
+      ]
+
+
+
+
+
+
+      }
+      
+
+
+
+
+    ]
+
+
+
+
+
+
+  
+
+
+}
+  
+
+  ],
+  [
+  
+ 
+    {
+      "$schema": "https://vega.github.io/schema/vega/v5.json",
+      "width": 270,
+      "height": 300,
+      "padding": 5,
+      "autosize": {"type": "pad", "resize": true},
+      "signals": [
+        {
+        "name": "width",
+        "value": 270,
+        "on": [
+          {
+            "events": {
+              "source": "window",
+              "type": "resize"
+            },
+            "update": "containerSize()[0]*0.95"
+          }
+        ]
+      },
+      {
+        "name": "height",
+        "value": 300,
+        "on": [
+          {
+            "events": {
+              "source": "window",
+              "type": "resize"
+            },
+            "update": "containerSize()[1]*0.95"
+          }
+        ]
+      }
+    ],
+    
+      "data": [
+        {
+          "name": "population"
+        },
+        {
+          "name": "aggregated",
+          "source": "population",
+          "transform": [
+            {
+              "type": "aggregate",
+              "fields": ["people"],
+              "groupby": ["age", "year"],
+              "ops": ["sum"],
+              "as": ["aggregatedPeople"]
+            }
+          ]
+        },
+  
+        {
+          "name": "maxPeople",
+          "source": "aggregated",
+          "transform": [
+            {
+              "type": "aggregate",
+              "fields": ["aggregatedPeople"],
+              "groupby": ["year"],
+              "ops": ["max"],
+              "as": ["max_aggregatedPeople"]
+            }
+          ]
+        },
+        {
+          "name": "genderfilter",
+          "source":"population",
+          "transform": [
+            {
+              "type":"formula",
+                "expr": "datum.sex == 2?'Female':'Male' ",
+                "as":"gender"
+             
+            }
+          ]
+        }
+      ],
+      
+     
+  
+      "scales": [
+        {
+          "name": "xscale",
+          "type": "band",
+          "zero":false,
+          "padding":0.5,
+         "range": [
+              {
+                "signal": "width*0.03"
+              },
+              {
+                "signal": "width*0.50"
+              }
+            ],
+          "domain": {"field":"year","data":"population"}
+         
+        },
+        {
+          "name": "yscale",
+          "type": "linear",
+          "domain": {"data": "aggregated", "field": "aggregatedPeople"},
+          "range": "height", "round": true
+        },
+        {
+          "name": "color",
+          "type": "ordinal",
+          "range": { "scheme": "category20" }
+        }
+      ],
+    
+      "axes": [
+        {"orient": "bottom", "scale": "xscale", "zindex": 1,"grid":false,"title":"Years"
+        
+        },
+        {"orient": "left", "scale": "yscale","format":"s","grid":false,"title":"Total Population"}
+      ],
+  
+    
+      "marks": [
+        {
+          "type": "line",
+          "point": {"filled": false, "fill": "white"},
+          "name": "peopleBars",
+          "from": {"data": "aggregated"},
+          "encode": {
+            "enter":{
+              "stroke": [{ "scale": "color", "field": "gender"}],
+              "tooltip": {"signal": "{'title': 'Population in 2000','TotalPeople': datum.people, 'Age': datum.age,'Gender':datum.gender,'Year':datum.year}"}
+            },
+  
+            "update": {
+              "x": {"scale": "xscale", "field": "year"},
+              "width": {"value": 20,"band":true},
+              "y": {"scale": "yscale", "field": "aggregatedPeople"},
+              "y2": {"scale": "yscale", "value": 0}
+             
+  
+            },
+            "legend":{"title":"Years"},
+            
+            "hover": {
+                 "fill":{"value":"red"}
+            }
+          }
+        }
+      ]
+      },
+      {
+        "$schema": "https://vega.github.io/schema/vega/v5.json",
+        "width": 270,
+        "height": 300,
+        "padding": 5,
+        "autosize": {"type": "pad", "resize": true},
+      
+        "data": [
+          {
+            "name": "population"
+          },
+          {
+            "name":"GenderGropps",
+            "source":"population",
+            "transform": [
+                 {
+                  "type":"formula",
+                  "expr": "datum.sex ==2?'Female':'Male'",
+                  "as":"gender"
+                 }
+            ]
+          },
+          {
+            "name": "aggregated",
+            "source": "GenderGropps",
+            "transform": [
+              {
+                "type": "aggregate",
+                "fields": ["people"],
+                "groupby": ["age", "year","gender"],
+                "ops": ["sum"],
+                "as": ["aggregatedPeople"]
+              }
+            ]
+          },
+    
+          {
+            "name": "maxPeople",
+            "source": "GenderGropps",
+            "transform": [
+              {
+                "type": "aggregate",
+                "fields": ["aggregatedPeople"],
+                "groupby": ["year"],
+                "ops": ["max"],
+                "as": ["max_aggregatedPeople"]
+              }
+            ]
+          }
+        ],
+        
+       
+    
+        "scales": [
+          {
+            "name": "xscale",
+            "type": "band",
+            "zero":false,
+            "padding":0.5,
+           "range": [
+                {
+                  "signal": "width*0"
+                },
+                {
+                  "signal": "width*1"
+                }
+              ],
+            "domain": {"field":"age","data":"population"}
+           
+          },
+          {
+            "name": "yscale",
+            "type": "linear",
+            "domain": {"data": "aggregated", "field": "aggregatedPeople"},
+            "range": "height", "round": true
+          },
+          {
+            "name": "color",
+            "type": "ordinal",
+            "range": { "scheme": "dark2" }
+          }
+        ],
+      
+        "axes": [
+          {"orient": "bottom", "scale": "xscale", "zindex": 1,"grid":false,"title":"Age"
+          
+          },
+          {"orient": "left", "scale": "yscale","format":"s","grid":true,"title":"Total Population"}
+        ],
+        "marks": [
+          {
+            "name":"people",
+          "type": "rect",
+          "from": {"data":"aggregated"},
+          "encode": { 
+            "enter":{
+              "fill": [{ "scale": "color", "field": "gender"}],
+              "tooltip": {"signal": "{'title': 'Population in 2000','TotalPeople': datum.people, 'Age': datum.age,'Gender':datum.gender,'Year':datum.year}"}
+            },
+           
+            "update":{
+              "x":{"scale":"xscale","field":"age"},
+              "width":{"scale":"xscale","band":1},
+              "y": {"scale": "yscale", "field": "aggregatedPeople", "stack": "zero"},
+              "y2":{"scale":"yscale","value":0}
+             
+            
+            },
+            "hover":{
+              "fill":{"value":"green"}
+            }
+            
+    
+    
+    
+          }
+    
+    
+          }
+    
+        ]
+      
+       
+        },
+        
+        {
+          "$schema": "https://vega.github.io/schema/vega/v5.json",
+          "width":300,
+          "height":300,
+          "autosize": "pad",
+        
+          "signals": [
+            {
+              "name": "selected",
+              "value": "",
+              "on": [
+                { "events": "arc:click!", "update": "datum" },
+                { "events": "dblclick!", "update": "''" }
+              ]
+            },
+            {
+              "name": "hovered",
+              "value": "",
+              "on": [{
+                  "events": "arc:mouseover!",
+                  "update": "datum"
+                },
+                {
+                  "events": "arc:mouseout!",
+                  "update": "''"
+                }
+              ]
+            }
+          ],
+         "data": [
+                {
+                  "name": "population",
+                
+               "transform": [
+                {
+                  "type": "pie",
+                  "field": "people"
+                }
+              ]
+                },
+                {
+                  "name":"GenderGropps",
+                  "source":"population",
+                  "transform": [
+                       {
+                        "type":"formula",
+                        "expr": "datum.sex ==2?'Female':'Male'",
+                        "as":"gender"
+                       }
+                  ]
+                },
+                {
+                  "name": "aggregated",
+                  "source": "GenderGropps",
+                  "transform": [
+                    {
+                      "type": "filter",
+                      "expr": "datum.year == 2000"
+                    },
+                    {
+                      "type": "aggregate",
+                      "fields": ["people"],
+                      "groupby": ["age", "year","gender"],
+                      "ops": ["sum"],
+                      "as": ["aggregatedPeople"]
+                    }
+                    
+                  ]
+                },
+                {
+                  "name":"yearFilter",
+                  "source":"aggregated",
+                 "transform": [
+                   {
+                     "type":"filter",
+                     "expr": "datum.year == 2000"
+                   }
+                 ]
+                }
+          
+               
+              ],
+         
+        
+          "scales": [
+            {
+              "name": "color",
+              "type": "ordinal",
+              "range": { "scheme": "category20" }
+            }
+          ],
+        
+          "marks": [
+            {
+              "name": "group",
+              "type": "arc",
+              "interactive": true,
+              "from": { "data": "GenderGropps" },
+              "encode": {
+                "enter": {
+                  "x": { "signal": "width / 2" },
+                  "y": { "signal": "height / 2" },
+                  "tooltip": {"signal": "{'title': 'Population in 2000','TotalPeople': datum.people, 'Age': datum.age,'Gender':datum.gender,'Year':datum.year}"}
+                 
+                
+                
+                },
+                "selection": {
+                  "series": {
+                    "type": "multi",
+                    "encodings": ["color"],
+                    "on": "click",
+                    "bind": "legend"
+                  }
+                },
+                "update": {
+                  "startAngle": { "field": "startAngle" },
+                  "endAngle": { "field": "endAngle" },
+                  "padAngle": [{ "value": 0 }],
+                  "outerRadius": { "signal": "width / 2" },
+                  "cornerRadius": { "value": 0 },
+                  "innerRadius": { "signal": 50 },
+                  "opacity": [{ "value": 1.0 }],
+                  "fill":[{"scale":"color","field":"age"}]
+                 
+                 
+                 
+                },
+                "hover": {}
+              }
+            }
+          ],
+          "view": {"stroke": true}
+        }
+      
+      
+    
+  
+   
+    
+  
+  
+  ]
+  
+  
